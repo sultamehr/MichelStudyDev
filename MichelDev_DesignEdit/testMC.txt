@@ -1,0 +1,17 @@
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0001_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0002_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0003_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0004_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0005_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0007_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0008_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0009_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0010_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0011_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0012_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0013_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0014_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0015_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0016_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0017_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/Jun82021_minervame1A_MC_testall/grid/central_value/minerva/ana/v22r1p1/00/11/00/00/SIM_minerva_00110000_Subruns_0018_CCQENu_Ana_Tuple_v22r1p1.root
