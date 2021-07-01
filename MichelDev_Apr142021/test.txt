@@ -1,0 +1,5 @@
+/pnfs/minerva/scratch/users/sultana/MichelclustersFix_interactive/nogrid/central_value/minerva/ana/v22r1p1/00/11/00/02/SIM_minerva_00110002_Subruns_0001_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/MichelclustersFix_interactive/nogrid/central_value/minerva/ana/v22r1p1/00/11/00/02/SIM_minerva_00110002_Subruns_0002_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/MichelclustersFix_interactive/nogrid/central_value/minerva/ana/v22r1p1/00/11/00/02/SIM_minerva_00110002_Subruns_0003_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/MichelclustersFix_interactive/nogrid/central_value/minerva/ana/v22r1p1/00/11/00/02/SIM_minerva_00110002_Subruns_0004_CCQENu_Ana_Tuple_v22r1p1.root
+/pnfs/minerva/scratch/users/sultana/MichelclustersFix_interactive/nogrid/central_value/minerva/ana/v22r1p1/00/11/00/02/SIM_minerva_00110002_Subruns_0005_CCQENu_Ana_Tuple_v22r1p1.root

@@ -1,0 +1,15 @@
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110000.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110001.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110002.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110003.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110004.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110005.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110006.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110007.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110008.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110009.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110010.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110011.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110012.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/drut1186/CCQENu_Anatuples/MuonKludge_ProtonLLR_UpdatedNeutron/MC_Merged/minervame1Apass1/CCQENu_mc_AnaTuple_run00110013.root
+
