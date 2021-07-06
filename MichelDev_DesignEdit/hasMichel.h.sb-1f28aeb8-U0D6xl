@@ -33,7 +33,7 @@ class hasMichel: public PlotUtils::Cut<UNIVERSE, EVENT>
            // continue;
          }
          
-         double dist = current_michel->Best3Ddist; //getting the minimum pion range 
+         double dist = current_michel->Best3Ddist; //getting the minimum pion range (vertex to Michel/Clus distance) 
            if (dist <= evt.m_bestdist) {
            evt.m_bestdist = dist;
            evt.m_idx = i;

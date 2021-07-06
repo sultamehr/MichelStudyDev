@@ -4,6 +4,7 @@
 #include "Michel.h"
 #include "CVUniverse.h"
 #include "MatchedMichel.h"
+#inckude "Cluster.h"
 
 struct MichelEvent {
     int m_idx = -1; // Index for Best Michel in nmichels
@@ -13,7 +14,7 @@ struct MichelEvent {
     double m_best_UZ = 9999.;
     double m_best_VZ = 9999.;
     int m_matchtype; // 0 NULL 1 UPVTX 2 DOWNVTX 3 UPCLUS 4 DOWNCLUS
-    std::vector<Michel*> m_nmichels; //nmatched michels
+    std::vector<Michel> m_nmichels; //nmatched michels
     double best_x = 9999.;
     double best_y = 9999.;
     double best_z = 9999.;

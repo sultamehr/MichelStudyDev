@@ -1,30 +1,11 @@
 #ifndef MICHEL_H
 #define MICHEL_H
 
-
 #include "CVUniverse.h"
-
-
 #include "Cluster.h"
-// A michel object is defined by a cluster of hits AND by the vertex to which
-// it is matched.
-//
-// The michel tool allows one cluster to be matched to multiple vertices, so
-// there can be multiple michel objects associated with a single cluster of
-// hits.
-//
-// Specifically, michel object includes the info:
-// * which vertex and track it's associated with
-// * the distance from the endpoint
-// * whether the fit distance is acceptable or not
+
 
 class Michel;
-
-// c++11 way to do a typedef
-//using MichelMap = std::map<int, Michel>;
-
-//// old school typedef that still works
-//typedef std::map<int, Michel> MichelMap;
 
 class Michel
 {  
@@ -32,34 +13,31 @@ class Michel
   //constructors
   Michel(const CVUniverse& univ, int ci);
   // Functions
-  Michel(){};  // fill in most basic stuff in "generic info"
-  void Clear(Michel* &current_michel);
+  Michel(){};  // fill in most basic stuff in "generic info" . this is default constructor you need it if you have public data members 
   void DoMoreInitializationAndProcessing(); // fill in more complicated stuff in "generic info"
   void DoMatching();                          // fill in "best matching stuff"
-  void DoesMichelMatchVtx(const CVUniverse& univ, Michel* &current_michel); //GEts info for Vtx Match
-  void DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel); // Gets info for ClusterMatch
-  void GetBestMatch(Michel* &current_michel); // get enum for best match out of all four saved matches
+  void DoesMichelMatchVtx(const CVUniverse& univ); //GEts info for Vtx Match
+  void DoesMichelMatchClus(const CVUniverse& univ); // Gets info for ClusterMatch
+  void GetBestMatch(); // get type for best match out of all four saved matches
+
   //std::vector<Michel*> CreateMichels(CVUniverse& univ);
   // generic info
   std::vector<double> up_location; // upstream location 0 X 1 U 2 V 3 Z
   std::vector<double> down_location; //downstream location
-  double m_x1 = 9999.;
-  double m_x2 = 9999.;
-  double m_y1 = 9999.;
-  double m_y2 = 9999.;
-  double m_u1 = 9999.;
-  double m_u2 = 9999.;
-  double m_v1 = 9999.;
-  double m_v2 = 9999.;
-  double m_z1 = 9999.;
-  double m_z2 = 9999.;
-  double energy = -999.;
-  double time = -999.;
-  int is_fitted = -1;
-  std::vector<double> up_to_vertex_dist2D; // XZ, UZ, VZ
-  std::vector<double> down_to_vertex_dist2D;
-  std::vector<double> up_to_clus_dist2D;
-  std::vector<double> down_to_clus_dist2D;
+  double m_x1 = 9999.; // Michel Endpoint 1 x
+  double m_x2 = 9999.; // Michel Endpoint 2 x
+  double m_y1 = 9999.; // Michel Endpoint 1 y
+  double m_y2 = 9999.; // Michel Endpoint 2 y
+  double m_u1 = 9999.; // Michel Endpoint 1 u
+  double m_u2 = 9999.; //Michel Endpoint 2 u
+  double m_v1 = 9999.; // Michel Endpoint 1 v
+  double m_v2 = 9999.; // Michel Endpoint 2 v
+  double m_z1 = 9999.; // Mihel Endpoint z 1
+  double m_z2 = 9999.; // Michel Endpoiint z2
+  double energy = -999.; // Michel energy
+  double time = -999.; // Michel Time
+  int is_fitted = -1; // Is the Michel fitted? 0 no. 1 yes. 
+  //Following are 2D distances (were stored in vectors but now as explicit data members)
   double up_to_vertex_XZ= 9999.;
   double up_to_vertex_UZ = 9999.;
   double up_to_vertex_VZ = 9999.;
@@ -72,16 +50,19 @@ class Michel
   double up_to_clus_XZ = 9999.;
   double up_to_clus_UZ = 9999.;
   double up_to_clus_VZ = 9999.;
+  //Michel End point to Vertex distance  (up = endpoint 1 and down = endpoint 2) TODO: actually find out which end point is upstream or downstream
   double up_to_vertex_dist3D = 9999.;
   double down_to_vertex_dist3D = 9999.;
+  // Maybe keep a vector of clusters that matched to each endpoint? 
   std::vector<Cluster> cluster_to_up_match;
   std::vector<Cluster> cluster_to_down_match;
-  double up_to_cluster_dist3D = 9999.;
-  double down_to_cluster_dist3D = 9999.;
-  double up_clus_michel_dist3D = 9999.;
-  double down_clus_michel_dist3D = 9999.;
-  double overlay_fraction = -1.0;
-  int nclusters = 0;
+  //3D distances between cluster and Michel 
+  double up_to_cluster_dist3D = 9999.;  // Distance between vertex and cluster that was matched to endpoint 1
+  double down_to_cluster_dist3D = 9999.; // Distance between vertex and cluster matched to endpoint 2
+  double up_clus_michel_dist3D = 9999.; // Distance between Michel endpoint 1 and clusters
+  double down_clus_michel_dist3D = 9999.; // Distance between Michel endpoint 2 and clusters
+  double overlay_fraction = -1.0; // Overlay fraction of the Michel, Default if Data. 0 if MC 1 if Data... (maybe some events in between?)
+  int nclusters = 0; // number of (non-muon) clusters in the primary event
   int vtx_endpoint = 0; //1 or 2 for which Michel end point is closest
   int clus_endpoint = 0; // 1 or 2 for which Michel endpoint is closest
   // best matching stuff
@@ -89,19 +70,24 @@ class Michel
   //enum BestClusterMatch {kUpVtxMatch, kDownVtxMatch, kUpClusMatch, kDownClusMatch, kNClusterMatches}; 
   //the following is in place until i figure out how to use the enum.
   int BestMatch = 0; // 0 = null match, 1= kUpVtxMatch, 2 = kDownVtxMatch, 3 = kUpClusMatch, 4=  kDownClusMatch, 
-  int tuple_idx;  
-  double Best3Ddist = 9999.;
-  std::vector<double> best_dist2D;
+  int tuple_idx;  // index of the Michel out of all the michels saved in the tuple
+  double Best3Ddist = 9999.; // Best 3D distance out of eitehr a vertex or a cluster match 
+  // best 2D distance for the best type of match
   double best_XZ = 9999.;
   double best_UZ= 9999.;
   double best_VZ = 9999.;
+  // Want to save the index of the clusters that the Michel best matched to. 
   int xclus_idx; 
   int uclus_idx;
-  int vclus_idx;              
+  int vclus_idx;   
+  
+  //True initial position of the michel  TODO: initial the other Michel truth member data here  (energy, time, momentum etc) 
 
   double true_initialx = 9999.;
   double true_initialy = 9999.;
   double true_initialz = 9999.;
+  
+  // the following member data were created to investigate my weird convoluted way of geting x and y values. Probably dont need them now. // TODO: check and remove the following member data
   
   double up_clus_x = 9999.;
   double up_clus_y = 9999.;
@@ -116,158 +102,12 @@ class Michel
   double down_vtx_y = 9999.;
   double down_vtx_z = 9999.;
   double is_overlay = -1;  
+  
+  ~DeleteMichel(){delete this;};  // This is going to be the main destructor.
 
 };
 
-void Michel::Clear(Michel* &current_michel){
-  up_location.clear(); // upstream location 0 X 1 U 2 V 3 Z
-  down_location.clear(); //downstream location
-  energy = -999.;
-  time = -999.;
-  is_fitted = -1;
-  up_to_vertex_dist2D.clear();
-  down_to_vertex_dist2D.clear();
-  up_to_vertex_dist3D = 9999.;
-  down_to_vertex_dist3D = 9999.;
-  cluster_to_up_match.clear();
-  cluster_to_down_match.clear();
-  up_to_cluster_dist3D = 9999.;
-  down_to_cluster_dist3D = 9999.;
-  
-  // best matching stuff
-  //enum *best_cluster_match; // just tells you which of the four matches are the best match
-  //enum BestClusterMatch {kUpVtxMatch, kDownVtxMatch, kUpClusMatch, kDownClusMatch, kNClusterMatches};
-  
-  //the following is in place until i figure out how to use the enum.
-  BestMatch = 0; // 0 = null match, 1= kUpVtxMatch, 2 = kDownVtxMatch, 3 = kUpClusMatch, 4=  kDownClusMatch, 
-   
-  Best3Ddist = 9999.;
-
-
-
-}
-
-void Michel::GetBestMatch(Michel* &current_michel){
-     int upvtxmatch = 0;
-     int downvtxmatch = 0;
-     int upclusmatch = 0;
-     int downclusmatch = 0;
-     
-     //if (current_michel->up_to_vertex_dist3D != NULL && )
-     
-     //std::cout << "GET BEST MATCH FOR THIS MICHEL " << std::endl;
-     if (current_michel->up_to_vertex_dist3D < current_michel->down_to_vertex_dist3D){
-
-        upvtxmatch = 1;
-     }
-     else if (current_michel->up_to_vertex_dist3D > current_michel->down_to_vertex_dist3D){
-
-        downvtxmatch = 1;
-     }
-     if (current_michel->up_clus_michel_dist3D < current_michel->down_clus_michel_dist3D){
-
-        upclusmatch = 1;
-     }
-     else if (current_michel->up_clus_michel_dist3D > current_michel->down_clus_michel_dist3D){
-
-        downclusmatch = 1;
-     }
-     
-     if (upvtxmatch == 1 && (upclusmatch == 1 || downclusmatch == 1 )){
-        if (current_michel->up_to_vertex_dist3D < current_michel->up_clus_michel_dist3D) {
-           //std::cout << "UPVTX IS BEST " << std::endl;
-           current_michel->best_dist2D = current_michel->up_to_vertex_dist2D;
-           current_michel->best_XZ = current_michel->up_to_vertex_XZ;
-           current_michel->best_UZ = current_michel->up_to_vertex_UZ;
-           current_michel->best_VZ = current_michel->up_to_vertex_VZ;
-           current_michel->BestMatch = 1;
-           current_michel->Best3Ddist = current_michel->up_to_vertex_dist3D;
-        }
-        else if (current_michel->up_to_vertex_dist3D >= current_michel->up_clus_michel_dist3D)
-        {
-           //std::cout << "UPCLUS IS BEST " << std::endl; 
-           current_michel->best_dist2D = current_michel->up_to_clus_dist2D;
-           current_michel->BestMatch = 3;
-           current_michel->best_XZ = current_michel->up_to_clus_XZ;
-           current_michel->best_UZ = current_michel->up_to_clus_VZ;
-           current_michel->best_VZ = current_michel->up_to_clus_UZ;
-           current_michel->Best3Ddist = current_michel->up_to_cluster_dist3D;
-        }
-        else if (current_michel->up_to_vertex_dist3D < current_michel->down_clus_michel_dist3D) {
-           //std::cout << "UPVTX IS BEST " << std::endl;
-           current_michel->best_dist2D = current_michel->up_to_vertex_dist2D;
-           current_michel->BestMatch = 1;
-           current_michel->Best3Ddist = current_michel->up_to_vertex_dist3D;
-           current_michel->best_XZ = current_michel->up_to_vertex_XZ;
-           current_michel->best_UZ = current_michel->up_to_vertex_UZ;
-           current_michel->best_VZ = current_michel->up_to_vertex_VZ;
-        }
-        else if (current_michel->up_to_vertex_dist3D >= current_michel->down_clus_michel_dist3D)
-        {
-           //std::cout << "DOWNCLUSISBEST" << std::endl;
-           current_michel->best_dist2D = current_michel->down_to_clus_dist2D;
-           current_michel->BestMatch = 4;
-           current_michel->Best3Ddist = current_michel->down_to_cluster_dist3D;
-           current_michel->best_XZ = current_michel->down_to_clus_XZ;
-           current_michel->best_UZ = current_michel->down_to_clus_UZ;
-           current_michel->best_VZ = current_michel->down_to_clus_VZ;
-        }
-     }
-     else if (downvtxmatch == 1 && (upclusmatch == 1 || downclusmatch == 1 )){
-       if (current_michel->down_to_vertex_dist3D < current_michel->up_clus_michel_dist3D) {
-           //std::cout << "DOWNVTX IS BEST " << std::endl;
-
-           current_michel->BestMatch = 2;
-           current_michel->best_XZ = current_michel->down_to_vertex_XZ;
-           current_michel->best_UZ = current_michel->down_to_vertex_UZ;
-           current_michel->best_VZ = current_michel->down_to_vertex_VZ;     
-           //std::cout << "Setting Best Dist" << std::endl;
-           current_michel->best_dist2D = current_michel->down_to_vertex_dist2D;
-           current_michel->Best3Ddist = current_michel->down_to_vertex_dist3D;
-
-       }
-       else if (current_michel->down_to_vertex_dist3D >= current_michel->up_clus_michel_dist3D)
-       {
-           //std::cout << "UPCLUS IS BEST " << std::endl;
-           current_michel->best_dist2D = current_michel->up_to_clus_dist2D;
-           current_michel->BestMatch = 3;
-           current_michel->Best3Ddist = current_michel->up_to_cluster_dist3D;
-           current_michel->best_XZ = current_michel->up_to_clus_XZ;
-           current_michel->best_UZ = current_michel->up_to_clus_UZ;
-           current_michel->best_VZ = current_michel->up_to_clus_VZ;
-       }
-       else if (current_michel->down_to_vertex_dist3D < current_michel->down_clus_michel_dist3D)
-       {        
-           //std::cout << "DOWNVTX IS BEST " << std::endl;
-
-           current_michel->BestMatch = 2;
-           current_michel->best_XZ = current_michel->down_to_vertex_XZ;
-           current_michel->best_UZ = current_michel->down_to_vertex_UZ;
-           current_michel->best_VZ = current_michel->down_to_vertex_VZ;   
-           //std::cout << "Setting Best Dist" << std::endl;
-           current_michel->best_dist2D = current_michel->down_to_vertex_dist2D;
-           current_michel->Best3Ddist = current_michel->down_to_vertex_dist3D;
-
-       }
-       else if (current_michel->down_to_vertex_dist3D >= current_michel->down_clus_michel_dist3D)
-       {
-       
-           //std::cout << "DOWNCLUSISBEST" << std::endl;
-           current_michel->best_dist2D = current_michel->down_to_clus_dist2D;
-           current_michel->BestMatch = 4;
-           current_michel->Best3Ddist = current_michel->down_to_cluster_dist3D;
-	   current_michel->best_XZ = current_michel->down_to_clus_dist2D[0];
-           current_michel->best_UZ = current_michel->down_to_clus_dist2D[1];
-           current_michel->best_VZ = current_michel->down_to_clus_dist2D[2];
-       }
-     
-     }
-     else{
-      current_michel->BestMatch = 0;
-     }
-     
-}
-
+//Setting the Michel data members directly from CV universe. No calculations made at this stage
 Michel::Michel(const CVUniverse& univ, int ci) 
 { 
   energy = univ.GetVecElem("FittedMichel_michel_energy", ci);
@@ -307,28 +147,139 @@ Michel::Michel(const CVUniverse& univ, int ci)
   //double up_to_cluster_dist3d;
   //double down_to_cluster_dist3d;
 }
-/*
-std::vector<Cluster*> CreateClusters(const CVUniverse& univ)
-{
-  vector<Cluster*> return_clusters;
-  int nclusters = univ.GetInt("FittedMichel_cluster_view_sz");
-  for (int i = 0; i < nclusters; ++i)
-  {
-    Cluster *c = new Cluster(univ, i);
-    if (c->energy < 2. || c->energy > 1000.) continue;
-    return_clusters.push_back(c);
-    
-  }
-  return return_clusters;
+
+//This function will get an integer for the best match type of the Michel.
+//It compares distance between MIchel and whatever it's best match is to find the Best type of Michel for a single Michel.
+
+void Michel::GetBestMatch(){
+     int upvtxmatch = 0;
+     int downvtxmatch = 0;
+     int upclusmatch = 0;
+     int downclusmatch = 0;
+     
+     //if (this->up_to_vertex_dist3D != NULL && )
+     
+     //std::cout << "GET BEST MATCH FOR THIS MICHEL " << std::endl;
+     //This is setting the values for which endpoint is a better match for each type. TODO: Revise this function. There has to be a better way to compare distances than what I wrote. 
+     
+     if (this->up_to_vertex_dist3D < this->down_to_vertex_dist3D){
+
+        upvtxmatch = 1;
+     }
+     else if (this->up_to_vertex_dist3D > this->down_to_vertex_dist3D){
+
+        downvtxmatch = 1;
+     }
+     if (this->up_clus_michel_dist3D < this->down_clus_michel_dist3D){
+
+        upclusmatch = 1;
+     }
+     else if (this->up_clus_michel_dist3D > this->down_clus_michel_dist3D){
+
+        downclusmatch = 1;
+     }
+     
+     if (upvtxmatch == 1 && (upclusmatch == 1 || downclusmatch == 1 )){
+        if (this->up_to_vertex_dist3D < this->up_clus_michel_dist3D) {
+           //std::cout << "UPVTX IS BEST " << std::endl;
+           this->best_dist2D = this->up_to_vertex_dist2D;
+           this->best_XZ = this->up_to_vertex_XZ;
+           this->best_UZ = this->up_to_vertex_UZ;
+           this->best_VZ = this->up_to_vertex_VZ;
+           this->BestMatch = 1;
+           this->Best3Ddist = this->up_to_vertex_dist3D;
+        }
+        else if (this->up_to_vertex_dist3D >= this->up_clus_michel_dist3D)
+        {
+           //std::cout << "UPCLUS IS BEST " << std::endl; 
+           this->best_dist2D = this->up_to_clus_dist2D;
+           this->BestMatch = 3;
+           this->best_XZ = this->up_to_clus_XZ;
+           this->best_UZ = this->up_to_clus_VZ;
+           this->best_VZ = this->up_to_clus_UZ;
+           this->Best3Ddist = this->up_to_cluster_dist3D;
+        }
+        else if (this->up_to_vertex_dist3D < this->down_clus_michel_dist3D) {
+           //std::cout << "UPVTX IS BEST " << std::endl;
+           this->best_dist2D = this->up_to_vertex_dist2D;
+           this->BestMatch = 1;
+           this->Best3Ddist = this->up_to_vertex_dist3D;
+           this->best_XZ = this->up_to_vertex_XZ;
+           this->best_UZ = this->up_to_vertex_UZ;
+           this->best_VZ = this->up_to_vertex_VZ;
+        }
+        else if (this->up_to_vertex_dist3D >= this->down_clus_michel_dist3D)
+        {
+           //std::cout << "DOWNCLUSISBEST" << std::endl;
+           this->best_dist2D = this->down_to_clus_dist2D;
+           this->BestMatch = 4;
+           this->Best3Ddist = this->down_to_cluster_dist3D;
+           this->best_XZ = this->down_to_clus_XZ;
+           this->best_UZ = this->down_to_clus_UZ;
+           this->best_VZ = this->down_to_clus_VZ;
+        }
+     }
+     else if (downvtxmatch == 1 && (upclusmatch == 1 || downclusmatch == 1 )){
+       if (this->down_to_vertex_dist3D < this->up_clus_michel_dist3D) {
+           //std::cout << "DOWNVTX IS BEST " << std::endl;
+
+           this->BestMatch = 2;
+           this->best_XZ = this->down_to_vertex_XZ;
+           this->best_UZ = this->down_to_vertex_UZ;
+           this->best_VZ = this->down_to_vertex_VZ;     
+           //std::cout << "Setting Best Dist" << std::endl;
+           this->best_dist2D = this->down_to_vertex_dist2D;
+           this->Best3Ddist = this->down_to_vertex_dist3D;
+
+       }
+       else if (this->down_to_vertex_dist3D >= this->up_clus_michel_dist3D)
+       {
+           //std::cout << "UPCLUS IS BEST " << std::endl;
+           this->best_dist2D = this->up_to_clus_dist2D;
+           this->BestMatch = 3;
+           this->Best3Ddist = this->up_to_cluster_dist3D;
+           this->best_XZ = this->up_to_clus_XZ;
+           this->best_UZ = this->up_to_clus_UZ;
+           this->best_VZ = this->up_to_clus_VZ;
+       }
+       else if (this->down_to_vertex_dist3D < this->down_clus_michel_dist3D)
+       {        
+           //std::cout << "DOWNVTX IS BEST " << std::endl;
+
+           this->BestMatch = 2;
+           this->best_XZ = this->down_to_vertex_XZ;
+           this->best_UZ = this->down_to_vertex_UZ;
+           this->best_VZ = this->down_to_vertex_VZ;   
+           //std::cout << "Setting Best Dist" << std::endl;
+           this->best_dist2D = this->down_to_vertex_dist2D;
+           this->Best3Ddist = this->down_to_vertex_dist3D;
+
+       }
+       else if (this->down_to_vertex_dist3D >= this->down_clus_michel_dist3D)
+       {
+       
+           //std::cout << "DOWNCLUSISBEST" << std::endl;
+           this->best_dist2D = this->down_to_clus_dist2D;
+           this->BestMatch = 4;
+           this->Best3Ddist = this->down_to_cluster_dist3D;
+	       this->best_XZ = this->down_to_clus_dist2D[0];
+           this->best_UZ = this->down_to_clus_dist2D[1];
+           this->best_VZ = this->down_to_clus_dist2D[2];
+       }
+     
+     }
+     else{
+      this->BestMatch = 0; // In case there are no matches for whatever reason. 
+     }
+     
 }
-*/
 
 
-void Michel::DoesMichelMatchVtx(const CVUniverse& univ, Michel* &current_michel){
+void Michel::DoesMichelMatchVtx(const CVUniverse& univ){
 
   //std::cout << "GETTING VTX MATCH FOR MICHEL " << std::endl;
   
-
+  // Getting Vertex Information
   double vtx_x = univ.GetVertex().X(); //mm
   double vtx_y = univ.GetVertex().Y(); //mm
   double vtx_z = univ.GetVertex().Z(); //mm
@@ -337,9 +288,9 @@ void Michel::DoesMichelMatchVtx(const CVUniverse& univ, Michel* &current_michel)
   double vtx_v = (0.5 * (vtx_x + sqrt(3.) * vtx_y));
   
   //std::cout << "VTX POSITION is (x, u , v, y, z) (" << vtx_x << " , " << vtx_u << " , " << vtx_v << " , " << vtx_y << " , " << vtx_z << std::endl;
-
-  double zdiff1 = vtx_z - current_michel->up_location[3];
-  double zdiff2 = vtx_z - current_michel->down_location[3];
+  //Initializing all the distance comparisons I will need to make
+  double zdiff1 = vtx_z - this->m_z1;
+  double zdiff2 = vtx_z - this->m_z2;
   double xdiff = 9999.;
   double udiff = 9999.;
   double vdiff = 9999.;
@@ -347,205 +298,76 @@ void Michel::DoesMichelMatchVtx(const CVUniverse& univ, Michel* &current_michel)
   double UZdist = 9999.; 
   double VZdist = 9999.; 
 
-  double michely1 = 9999.;
-  double michely2 = 9999.;
-  double michelx1 = 9999.;
-  double michelx2 = 9999.;
-  double michelz1 = current_michel->up_location[3]; 
-  double michelz2 = current_michel->down_location[3];
-  double timediff = current_michel->time - vtx_t;
-  
-  //std::cout << "DONE INITIALIZING VARIABLES" << std::endl;
-
-  //if (timediff < 0.400 || (zdiff1 > 1000. && zdiff2 > 1000.)){
-  //current_michel->up_to_vertex_dist3D = 9999.;
-  //current_michel->down_to_vertex_dist3D = 9999.;
-  //}
+  double michely1 = this->m_y1;
+  double michely2 = this->m_y2;
+  double michelx1 = this->m_x1;
+  double michelx2 = this->m_z2;
+  double michelz1 = this->m_z1; 
+  double michelz2 = this->m_z2;
+  double timediff = (this->time) - vtx_t;
   
   
-    //if (zdiff1 > 500.) break;
-  
-     //std::cout << "GETTING MICHEL UPSTREAM VARS" << std::endl;
-  
-    xdiff = abs(vtx_x - current_michel->up_location[0]);
-    udiff = abs(vtx_u - current_michel->up_location[1]);
-    vdiff = abs(vtx_v - current_michel->up_location[2]);
+// 2D distance calculations for Endpoint 1
+    xdiff = abs(vtx_x - this->m_x1);
+    udiff = abs(vtx_u - this->m_u1);
+    vdiff = abs(vtx_v - this->m_v1);
     
     XZdist = sqrt(xdiff*xdiff + zdiff1*zdiff1);
     UZdist = sqrt(udiff*udiff + zdiff1*zdiff1);
     VZdist = sqrt(vdiff*vdiff + zdiff1*zdiff1);
 
-    michelx1 = current_michel->up_location[0];
-    
-    //std::cout << "COMBINATORIX TO GET BEST  X AND Y calculations" << std::endl;
+    this->up_to_vertex_dist2D.push_back(XZdist);
+    this->up_to_vertex_dist2D.push_back(UZdist);
+    this->up_to_vertex_dist2D.push_back(VZdist);
 
-    if (XZdist <= UZdist && XZdist < VZdist && UZdist <= VZdist){ 
-        michely1 = (1. / sqrt(3)) * (current_michel->up_location[0] - 2*current_michel->up_location[1]);
-        current_michel->up_vtx_y = michely1; 
-        //std::cout << "XZdist <= UZdist && XZdist < VZdist && UZdist <= VZdist" << std::endl;
+    this->up_to_vertex_XZ = XZdist;
+    this->up_to_vertex_UZ = UZdist;
+    this->up_to_vertex_VZ = VZdist;
 
-    }
-    else if (XZdist <= UZdist && XZdist < VZdist && UZdist > VZdist){
-        //std::cout << "XZdist <= UZdist && XZdist < VZdist && UZdist > VZdist" << std::endl;
-        michely1 = (1. / sqrt(3)) * (2*current_michel->up_location[2] - current_michel->up_location[0]);
-        current_michel->up_vtx_y = michely1;
-   
-        }
-    else if (UZdist <= XZdist && UZdist < VZdist && VZdist <= XZdist) {
-        //std::cout << "UZdist <= XZdist && UZdist < VZdist && VZdist <= XZdist" << std::endl;
-       michely1 = (1. / sqrt(3)) * (current_michel->up_location[2] - current_michel->up_location[1]);
-       michelx1 = current_michel->up_location[1] + current_michel->up_location[2];
-       current_michel->up_vtx_y = michely1;
-       current_michel->up_vtx_x = michelx1;
-
-    }
-    else if (UZdist <= XZdist && UZdist < VZdist && VZdist > XZdist) 
-    {   //std::cout << "UZdist <= XZdist && UZdist < VZdist && VZdist > XZdist" << std::endl;
-   	michely1 = (1. / sqrt(3)) * (current_michel->up_location[0] - 2*current_michel->up_location[1]);
-        current_michel->up_vtx_y = michely1;
-
-    }
-    else if (VZdist <= XZdist && VZdist < UZdist && XZdist <= UZdist)
-    { 
-        //std::cout << "VZdist <= XZdist && VZdist < UZdist && XZdist <= UZdist" << std::endl;
-        michely1 = (1. / sqrt(3)) * (2 * current_michel->up_location[2] - current_michel->up_location[0]);
-        current_michel->up_vtx_y = michely1;
-
-    }
-    else if (VZdist <= XZdist && VZdist < UZdist && XZdist > UZdist){
-     
-      //std::cout << "VZdist <= XZdist && VZdist < UZdist && XZdist > UZdist" << std::endl;
-    
-      michely1 = (1. / sqrt(3)) * (current_michel->up_location[2] - current_michel->up_location[1]);
-      michelx1 = current_michel->up_location[1] + current_michel->up_location[2];
-      current_michel->up_vtx_y = michely1;
-      current_michel->up_vtx_x = michelx1;
-
-    }
-    
-    //std::cout << "SETTING 2D DISTANCE FOR MICHEL-VTX" << XZdist << "  " << UZdist << "  " << VZdist << "    " << std::endl;
-
-    current_michel->up_to_vertex_dist2D.push_back(XZdist);
-    current_michel->up_to_vertex_dist2D.push_back(UZdist);
-    current_michel->up_to_vertex_dist2D.push_back(VZdist);
-
-    current_michel->up_to_vertex_XZ = XZdist;
-    current_michel->up_to_vertex_UZ = UZdist;
-    current_michel->up_to_vertex_VZ = VZdist;
-
-    //if (zdiff2 > 500.) break;
-
-    //std::cout << "SETTING MICHEL VARS FOR DOWN STREAM" << std::endl;
-    xdiff = abs(vtx_x - current_michel->down_location[0]);
-    udiff = abs(vtx_u - current_michel->down_location[1]);
-    vdiff = abs(vtx_v - current_michel->down_location[2]);
+//2D Distance calculations for endpoint2
+    xdiff = abs(vtx_x - this->m_x2);
+    udiff = abs(vtx_u - this->m_u2);
+    vdiff = abs(vtx_v - this->m_v2);
     XZdist = sqrt(xdiff*xdiff + zdiff2*zdiff2);
     UZdist = sqrt(udiff*udiff + zdiff2*zdiff2);
     VZdist = sqrt(vdiff*vdiff + zdiff2*zdiff2);
-    michelx2 = current_michel->down_location[0];
-    
-    if (XZdist < UZdist && XZdist < VZdist && UZdist <= VZdist){
-        //std::cout << "XZdist <= UZdist && XZdist < VZdist && UZdist <= VZdist" << std::endl;
-    
-        michely2 = (1. / sqrt(3)) * (current_michel->down_location[0] - 2*current_michel->down_location[1]);
-        current_michel->down_vtx_y = michely2;
+
+    this->down_to_vertex_dist2D.push_back(XZdist);
+    this->down_to_vertex_dist2D.push_back(UZdist);
+    this->down_to_vertex_dist2D.push_back(VZdist);
+    this->down_to_vertex_XZ = XZdist;
+    this->down_to_vertex_UZ = UZdist;
+    this->down_to_vertex_VZ = VZdist; 
  
-    }
-    else if (XZdist < UZdist && XZdist < VZdist && UZdist > VZdist){
-        //std::cout << "XZdist <= UZdist && XZdist < VZdist && UZdist > VZdist" << std::endl;
-        michely2 = (1. / sqrt(3)) * (2*current_michel->down_location[2] - current_michel->down_location[0]);
-        current_michel->down_vtx_y = michely2;
-   
-    }
-    else if (UZdist < XZdist && UZdist < VZdist && VZdist <= XZdist) {
-       //std::cout << "UZdist <= XZdist && UZdist < VZdist && VZdist <= XZdist" << std::endl;
-    
-       michely2 = (1. / sqrt(3)) * (current_michel->down_location[2] - current_michel->down_location[1]);
-       michelx2 = current_michel->down_location[1] + current_michel->down_location[2];
-       current_michel->down_vtx_y = michely2;
-       current_michel->down_vtx_x = michelx2;
-
-
-    }
-    else if (UZdist < XZdist && UZdist < VZdist && VZdist > XZdist){
-        //std::cout << "UZdist <= XZdist && UZdist < VZdist && VZdist > XZdist" << std::endl;
-        michely2 = (1. / sqrt(3)) * (current_michel->down_location[0] - 2*current_michel->down_location[1]);
-        current_michel->down_vtx_y = michely2; 
-
-    }
-    else if (VZdist < XZdist && VZdist < UZdist && XZdist <= UZdist)
-    { 
-        //std::cout << "VZdist <= XZdist && VZdist < UZdist && XZdist <= UZdist" << std::endl;
-        michely2 = (1. / sqrt(3)) * (2 * current_michel->down_location[2] - current_michel->down_location[0]);
-        current_michel->down_vtx_y = michely2;
-    
-    }
-    else if (VZdist < XZdist && VZdist < UZdist && XZdist > UZdist){
-      //std::cout << "VZdist <= XZdist && VZdist < UZdist && XZdist > UZdist" << std::endl;
-    
-      michely2 = (1. / sqrt(3)) * (current_michel->down_location[2] - current_michel->down_location[1]);
-      michelx2 = current_michel->down_location[1] + current_michel->down_location[2];
-      current_michel->down_vtx_y = michely2;
-      current_michel->down_vtx_x = michelx2;
-
-    }
-
-    current_michel->down_vtx_z = michelz2;
-    current_michel->up_vtx_z = michelz1;
-   
-    //std::cout << "SETTING 2D DISTANCE FOR MICHEL-VTX" << XZdist << "  " << UZdist << "  " << VZdist << "    " << std::endl;
-    current_michel->down_to_vertex_dist2D.push_back(XZdist);
-    current_michel->down_to_vertex_dist2D.push_back(UZdist);
-    current_michel->down_to_vertex_dist2D.push_back(VZdist);
-    current_michel->down_to_vertex_XZ = XZdist;
-    current_michel->down_to_vertex_UZ = UZdist;
-    current_michel->down_to_vertex_VZ = VZdist; 
- 
-  
-  //std::cout << "CALCULATING THE 3D DISTANCES" << std::endl;
-
-
-  double xdiff1 = abs(vtx_x - current_michel->m_x1);
-  double xdiff2 = abs(vtx_x - current_michel->m_x2);
-  double ydiff1 = abs(vtx_y - current_michel->m_y1);
-  double ydiff2 = abs(vtx_y - current_michel->m_y2);
+//3D distance calculations
+  double xdiff1 = abs(vtx_x - this->m_x1);
+  double xdiff2 = abs(vtx_x - this->m_x2);
+  double ydiff1 = abs(vtx_y - this->m_y1);
+  double ydiff2 = abs(vtx_y - this->m_y2);
 
   double dist1 = sqrt(zdiff1*zdiff1 + xdiff1*xdiff1 + ydiff1*ydiff1);
   double dist2 = sqrt(zdiff2*zdiff2 + xdiff2*xdiff2 + ydiff2*ydiff2);
 
 
-  current_michel->up_to_vertex_dist3D = dist1;
-  current_michel->down_to_vertex_dist3D = dist2;
+  this->up_to_vertex_dist3D = dist1;
+  this->down_to_vertex_dist3D = dist2;
  
-  if (dist1 < dist2) current_michel->vtx_endpoint = 1;
-  else if (dist2 < dist1) current_michel->vtx_endpoint = 2;  
-  //std::cout << "Vtx Dist 1 " << dist1 << " Vtx Dist 2 " << dist2 << std::endl;
+  if (dist1 < dist2) this->vtx_endpoint = 1;
+  else if (dist2 < dist1) this->vtx_endpoint = 2;  
 
-  //if (dist1 < dist2 && dist1 < 10.2) {
-  //  match = true;
-  //  dist3D = dist1;
-  //}
-  //else if (dist1 >= dist2 && dist2 < 10.2)
-  //{
-  //   match = true;
-  //   dist3D = dist2;
-  //}
   
   ////std::cout << "END OF LOOP TO FIND VTX MATCH" << std::endl;
 
 
 }
 
-void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel){
+void Michel::DoesMichelMatchClus(const CVUniverse& univ){
 
   //This is where the function for Cluster Matching goes
   
   ////std::cout << "STARTING SEARCH FOR CLUSTER MATCH " << std::endl;
-
-
-  //int nclusters = univ.GetInt("FittedMichel_cluster_view_sz");
-  //CVUniverse* univ;
-  int nclusters = current_michel->nclusters;
+  //Inititalizing vertex variables needed for cluster matching
+  int nclusters = this->nclusters;
   double vtx_x = univ.GetVertex().X(); //mm
   double vtx_y = univ.GetVertex().Y(); //mm
   double vtx_z = univ.GetVertex().Z(); //mm
@@ -553,11 +375,6 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
   double vtx_u = (0.5 * (vtx_x - sqrt(3.) * vtx_y));
   double vtx_v = (0.5 * (vtx_x + sqrt(3.) * vtx_y)); 
 
-  //std::map<int, Cluster> match_clusters;
-  
- 
-  
- 
   double closestdistance1x = 9999.;
   double closestdistance1u = 9999.;
   double closestdistance1v = 9999.;
@@ -567,20 +384,19 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
   double closestdistance2u = 9999.;
   double closestdistance2v = 9999.;
   double closestdistance2z = 9999.;
-
-
-  double michelx1 = current_michel->up_location[0];
-  double michelx2 = current_michel->down_location[0];
-  double michelu1 = current_michel->up_location[1];
-  double michelu2 = current_michel->down_location[1];
-  double michelv1 = current_michel->up_location[2];
-  double michelv2 = current_michel->down_location[2];
-  double michelz1 = current_michel->up_location[3];
-  double michelz2 = current_michel->down_location[3];
-  double michely1 = 9999.;
-  double michely2 = 9999.;
   
-  double micheltime = current_michel->time;
+  double michelx1 = this->m_x1;
+  double michelx2 = this->m_x2;
+  double michelu1 = this->m_u1;
+  double michelu2 = this->m_u2;
+  double michelv1 = this->m_v1;
+  double michelv2 = this->m_v2;
+  double michelz1 = this->m_z1;
+  double michelz2 = this->m_z2;
+  double michely1 = this->m_y1;
+  double michely2 = this->m_y2;
+  
+  double micheltime = this->time;
   
   std::cout << "Michel position 1 is " << michelx1 << " , " << michelu1 << " , " << michelv1 << " , " << michelz1 << std::endl;
   
@@ -589,15 +405,16 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
   std::vector<Cluster> endpoint1_clus;
   std::vector<Cluster> endpoint2_clus;
 
-// Get the closest distance for each view
+  // Get the closest distance for each view
 
   ////std::cout << "STARTING LOOP OVER CLUSTERS " << std::endl;
-  int x1_idx = -1;
+  int x1_idx = -1; //want to save the index for each closest cluster
   int u1_idx = -1;
   int v1_idx = -1;
   int x2_idx = -1;
   int u2_idx = -1;
   int v2_idx = -1;
+  
   for (int i = 0; i < nclusters; i++){
 
     Cluster current_cluster = Cluster(univ, i);
@@ -610,32 +427,26 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
     double timediff = micheltime - time;
 
 
-    if (energy < 2.) continue;
+    if (energy < 2.) continue; // only get clusters greater than 2 MeV
     if (timediff < .400) continue; //only get clusters that occur BEFORE the michel time
     
     //std::cout << "printing cluster info " << "energy " << energy << " time " << time << " pos " << pos << " zpos " << zpos << std::endl;
 
     double zdiff1 = abs(zpos - michelz1);
     double zdiff2 = abs(zpos - michelz2);
-    
-    
-    //if (zdiff1 > 500. && zdiff2 > 500.) continue;
-    
-    ////std::cout << "GETTING 2D Distances for each cluster view" << std::endl;
-
-
+    //Calculating 2D distance in X view
     if (view == 1)
     {
-
+      //Endpoint 1 calculations
       double xdiff1 = abs(pos - michelx1);
 
       double x2Ddistance1 = sqrt(xdiff1 * xdiff1 + zdiff1 * zdiff1);
 
       if (x2Ddistance1 <= closestdistance1x ){
-	 closestdistance1x = x2Ddistance1;
+	 closestdistance1x = x2Ddistance1; // this is redundant if I just use index instead
          x1_idx = i;    
       }
-
+      //Endpoint 2 Calculations
       double xdiff2 = pos - michelx2;
 
       double x2Ddistance2 = sqrt(xdiff2 * xdiff2 + zdiff2 * zdiff2);
@@ -645,44 +456,48 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
         x2_idx = i;   
       }
     }
-    else if (view == 2)
+    else if (view == 2) // Calculating 2D distance in U view
     {
+    
+      //Endpoint 2 Calculations
       double udiff1 = pos - michelu1;
 
       double u2Ddistance1 = sqrt(udiff1 * udiff1 + zdiff1 * zdiff1);
 
       if (u2Ddistance1 <= closestdistance1u ){ 
-	closestdistance1u = u2Ddistance1;
+	    closestdistance1u = u2Ddistance1;
         u1_idx = i;
       }
-
+      //Endpoint 1 Calculations
       double udiff2 = pos - michelu2;
 
       double u2Ddistance2 = sqrt(udiff2 * udiff2 + zdiff2 * zdiff2);
 
       if (u2Ddistance2 <= closestdistance2u){
-	 closestdistance2u = u2Ddistance2;
+	     closestdistance2u = u2Ddistance2;
          u2_idx = i;
       }
 
     }
-    else if (view == 3)
+    else if (view == 3) // Calculating 2D dsitance in V view
     {
+    
+      //Endpoint 1 Calculations
       double vdiff1 = pos - michelv1;
 
       double v2Ddistance1 = sqrt(vdiff1 * vdiff1 + zdiff1 * zdiff1);
 
       if (v2Ddistance1 <= closestdistance1v ){
-	  closestdistance1v = v2Ddistance1;
-	  v1_idx = i;
+	    closestdistance1v = v2Ddistance1;
+	    v1_idx = i;
       }
-
+      //Endpoint 2 Calculations
       double vdiff2 = pos - michelv2;
 
       double v2Ddistance2 = sqrt(vdiff2 * vdiff2 + zdiff2 * zdiff2);
 
       if (v2Ddistance2 <= closestdistance2v){
-	 closestdistance2v = v2Ddistance2;
+	     closestdistance2v = v2Ddistance2;
          v2_idx = i;
       }
     }
@@ -691,17 +506,9 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
   std::cout << "Printing closest clusters to each end point: x1: " << x1_idx << " u1: " << u1_idx << " v1: " << v1_idx << " x2: " << x2_idx << " u2: " << u2_idx << " v2: " << v2_idx << std::endl;
   
 
-
 //Now store the closest X, u, v clusters for each Michel Endpoint based on the above closest distance
 
-  //std::cout << "Looping over clusters again to match to closest distance in each view" << std::endl;
-  
-  //if (closestdistance1v < 100. || closestdistance1x < 100. || closestdistance1u < 100.){
-  //std::cout << "Closest distance x1 " << closestdistance1x << " u1 " << closestdistance1u << " v1 " << closestdistance1v << std::endl;
-  //} 
-  //if (closestdistance2v < 100. || closestdistance2x < 100. || closestdistance2u < 100.){
-  //std::cout << "Closest distance x2 " << closestdistance2x << " u2 " << closestdistance2u << " v2 " << closestdistance2v << std::endl; 
-  //}
+ // Closest cluster's index will be used to only 
  
  std::vector<double> clusx1;
  std::vector<double> clusx2;
@@ -712,7 +519,7 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
  std::vector<double> clusv1;
  std::vector<double> clusv2;
  for (int i = 0; i < nclusters; i++){
-    //if (closesum1 > 1000. && closesum2 > 1000.) continue;
+
     Cluster current_cluster = Cluster(univ, i);
 
     double energy = current_cluster.energy;
@@ -728,35 +535,22 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
     double zdiff1 = abs(zpos - michelz1);
     double zdiff2 = abs(zpos - michelz2);
     
-
-    
-    //std::cout << "Pushing back clusters ONLY equal to closest" << std::endl;
-
+    // Saving clusters with distances equal to the closest clusters. Again, this is probably not the best way. I need to rewrite this section to just use clusters from the index I saved in the previous loop. That way I reduce the number of clusters that I have to loop over. 
 
     if (view == 1)
     {
+      //Endpoint 1 
 
-      double xdiff1 = abs(pos - michelx1);
-
-      double x2Ddistance1 = sqrt(xdiff1 * xdiff1 + zdiff1 * zdiff1);
-
-      if (x2Ddistance1 == closestdistance1x ){
+      if (i = x1_idx){ // if current index is same as the closest endpoint 1 cluster in X View
         endpoint1_clus.push_back(current_cluster);
-        current_michel->cluster_to_up_match.push_back(current_cluster);
-        x1_idx = i; 
+        this->cluster_to_up_match.push_back(current_cluster); //this one is redundant
 
         clusx1.push_back(pos);
         clusx1.push_back(zpos);      
       }
-
-      double xdiff2 = abs(pos - michelx2);
-
-      double x2Ddistance2 = sqrt(xdiff2 * xdiff2 + zdiff2 * zdiff2);
-
-      if (x2Ddistance2 == closestdistance2x ){
+      else if (i == x2_idx){ // if current index is same as the closest endpoint 2 cluster in X View
         endpoint2_clus.push_back(current_cluster);
-        current_michel->cluster_to_down_match.push_back(current_cluster);
-        x2_idx = i;
+        this->cluster_to_down_match.push_back(current_cluster); // TODO remove
         clusx2.push_back(pos);
         clusx2.push_back(zpos);
       }
@@ -764,25 +558,18 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
     }
     else if (view == 2)
     {
-      double udiff1 = abs(pos - michelu1);
 
-      double u2Ddistance1 = sqrt(udiff1 * udiff1 + zdiff1 * zdiff1);
-
-      if (u2Ddistance1 == closestdistance1u ){
+      if (i == u1_idx){ // if current index is same as the closest endpoint 1 cluster in U View
         endpoint1_clus.push_back(current_cluster);
-        current_michel->cluster_to_up_match.push_back(current_cluster);
+        this->cluster_to_up_match.push_back(current_cluster); //Remove?
         u1_idx = i;
         clusu1.push_back(pos);
         clusu1.push_back(zpos);
       }
-      double udiff2 = abs(pos - michelu2);
-
-      double u2Ddistance2 = sqrt(udiff2 * udiff2 + zdiff2 * zdiff2);
-
-      if (u2Ddistance2 == closestdistance2u)
+      else if (i == u2_idx) // if current index is same as the closest endpoint 2 cluster in U View
       {
         endpoint2_clus.push_back(current_cluster);
-        current_michel->cluster_to_down_match.push_back(current_cluster);
+        this->cluster_to_down_match.push_back(current_cluster); // remove?
         u2_idx = i;
         clusu2.push_back(pos);
         clusu2.push_back(zpos);
@@ -790,25 +577,17 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
     }
     else if (view == 3)
     {
-      double vdiff1 = abs(pos - michelv1);
 
-      double v2Ddistance1 = sqrt(vdiff1 * vdiff1 + zdiff1 * zdiff1);
-
-      if (v2Ddistance1 == closestdistance1v ){
+      if (i == v1_idx){ // if current index is same as the closest endpoint 1 cluster in V View
         endpoint1_clus.push_back(current_cluster);
-        current_michel->cluster_to_up_match.push_back(current_cluster);
+        this->cluster_to_up_match.push_back(current_cluster); // remove?
         v1_idx = i;
         clusv1.push_back(pos);
         clusv1.push_back(zpos);
        }
-
-      double vdiff2 = abs(pos - michelv2);
-
-      double v2Ddistance2 = sqrt(vdiff2 * vdiff2 + zdiff2 * zdiff2);
-
-       if (v2Ddistance2 == closestdistance2v ){
+       else if (i == v2_idx){ // if current index is same as the closest endpoint 2 cluster in V View
         endpoint1_clus.push_back(current_cluster);
-        current_michel->cluster_to_down_match.push_back(current_cluster);
+        this->cluster_to_down_match.push_back(current_cluster); //remove?
         v2_idx = i;
         clusv2.push_back(pos);
         clusv2.push_back(zpos);
@@ -816,264 +595,225 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ, Michel* &current_michel
     }
 
     
-  }
-   
- //std::cout << "Pushing back clusters ONLY equal to closest" << std::endl;
- 
- std::cout << "Closest cluster index to endpoint 1 are " << x1_idx << " : " << u1_idx << " : " << v1_idx << std::endl;
- std::cout << "Closest cluster index to endpoint 2 are " << x2_idx << " : " << u2_idx << " : " << v2_idx << std::endl;
+  } // End of loop over clusters
 
- std::vector<double> matchclus1;
- std::vector<double> matchclus2;
+ //This is vector of positions for each endpoint cluster match
+ std::vector<double> matchclus1; // index [0] = x, [1] = y, [2] = z
+ std::vector<double> matchclus2; // index [0] = x, [1] = y, [2] = z
  
  //std::cout << "LOOPING OVER ENDPOINT1 CLUSTERS" << std::endl;
-
+ 
  double XZdist1 = 9999.;
  double UZdist1 = 9999.;
  double VZdist1 = 9999.;
 
-  // get 3D point from the enpoint1 clusters
+  // Check if our cluster vectors are empty and calculate 2D distances for endpoint 1
 if (!clusx1.empty()){
-    double xdif = abs(current_michel->m_x1 - clusx1[0]);
-    double zdif = abs(current_michel->m_z1 - clusx1[1]);
+    double xdif = abs(this->m_x1 - clusx1[0]);
+    double zdif = abs(this->m_z1 - clusx1[1]);
     XZdist1 = sqrt(xdif*xdif + zdif*zdif);}
 if (!clusu1.empty()){
-    double udif = abs(current_michel->m_u1 - clusu1[0]);
-    double zdif = abs(current_michel->m_z1 - clusu1[1]);
+    double udif = abs(this->m_u1 - clusu1[0]);
+    double zdif = abs(this->m_z1 - clusu1[1]);
     UZdist1 = sqrt(udif*udif + zdif*zdif);}
 if (!clusv1.empty()){
-    double vdif = abs(current_michel->m_v1 - clusv1[0]);
-    double zdif = abs(current_michel->m_z1 - clusv1[1]);
+    double vdif = abs(this->m_v1 - clusv1[0]);
+    double zdif = abs(this->m_z1 - clusv1[1]);
     VZdist1 = sqrt(vdif*vdif + zdif*zdif);}
 
   std::cout << " XZ, UZ, VZ 1: " << XZdist1 << " , " << UZdist1 << " , " << VZdist1 << std::endl;
-  current_michel->up_to_clus_dist2D.push_back(XZdist1);
-  current_michel->up_to_clus_dist2D.push_back(UZdist1);
-  current_michel->up_to_clus_dist2D.push_back(VZdist1);
-  current_michel->up_to_clus_XZ = XZdist1;
-  current_michel->up_to_clus_UZ = UZdist1;
-  current_michel->up_to_clus_VZ = VZdist1;
+  //Saving the 2D distances for endpoint 1
+  this->up_to_clus_dist2D.push_back(XZdist1);
+  this->up_to_clus_dist2D.push_back(UZdist1);
+  this->up_to_clus_dist2D.push_back(VZdist1);
+  this->up_to_clus_XZ = XZdist1;
+  this->up_to_clus_UZ = UZdist1;
+  this->up_to_clus_VZ = VZdist1;
+  
 //std::cout << "GET 3D Information for Clusters - ENDPOINT1" << std::endl;
-  current_michel->up_clus_y = michely1;
-  current_michel->up_clus_x = michelx1;
-  current_michel->up_clus_z = michelz1;
-
+//This is the convoluted system that calculates the Endpoint 
   if (XZdist1 < UZdist1 && XZdist1 < VZdist1 && UZdist1 <= VZdist1){ // XU views closest
     if (!clusu1.empty() && !clusx1.empty()){
-    michely1 = (1. / sqrt(3.)) * (current_michel->up_location[0] - 2*current_michel->up_location[1]);
+    michely1 = (1. / sqrt(3.)) * (this->up_location[0] - 2*this->up_location[1]);
     double yclus = (1. / sqrt(3.)) * (clusx1[0] - 2 * clusu1[0]);
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus); // y point of match 3D point
-    matchclus1.push_back(clusx1[1]); // seting the cluster 3D point z to be of the closest view
-    current_michel->up_clus_y = michely1;
+    matchclus1.push_back(clusx1[1]); // setting the cluster 3D point z to be of the closest view
+    this->up_clus_y = michely1;
 
     }
   }
   else if (XZdist1 < UZdist1 && XZdist1 < VZdist1 && UZdist1 > VZdist1){ //XV closest
-  
     if (!clusv1.empty() && !clusx1.empty()){
   
-    michely1 = (1. / sqrt(3.)) * (2*current_michel->up_location[2] - current_michel->up_location[0]);
+    michely1 = (1. / sqrt(3.)) * (2*this->up_location[2] - this->up_location[0]);
     double yclus =  (1. / sqrt(3.)) * (2 * clusv1[0] - clusx1[0]);
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus);
     matchclus1.push_back(clusx1[1]); // seting the cluster 3D point z to be of the closest view
-    current_michel->up_clus_y = michely1;
+    this->up_clus_y = michely1;
     }
   }
   else if (UZdist1 < XZdist1 && UZdist1 < VZdist1 && VZdist1 <= XZdist1) { // UV closest
     if (!clusv1.empty() && !clusu1.empty()){
 
-     michely1 = (1. / sqrt(3.)) * (current_michel->up_location[2] - current_michel->up_location[1]);
-     michelx1 = current_michel->up_location[1] + current_michel->up_location[2];
+     michely1 = (1. / sqrt(3.)) * (this->up_location[2] - this->up_location[1]);
+     michelx1 = this->up_location[1] + this->up_location[2];
      double yclus = (1. / sqrt(3.)) * (clusv1[0] - clusu1[0]);
      double xclus = clusu1[0] + clusv1[0];
      matchclus1.push_back(xclus);
      matchclus1.push_back(yclus);
      matchclus1.push_back(clusu1[1]);  // seting the cluster 3D point z to be of the closest view
-     current_michel->up_clus_y = michely1;
-     current_michel->up_clus_x = michelx1;  
+     this->up_clus_y = michely1;
+     this->up_clus_x = michelx1;  
     }
   }
   else if (UZdist1 < XZdist1 && UZdist1 < VZdist1 && VZdist1 > XZdist1) { //UX closest
     if (!clusu1.empty() && !clusx1.empty()){
 
-    michely1 = (1. / sqrt(3.)) * (current_michel->up_location[0] - 2*current_michel->up_location[1]);
+    michely1 = (1. / sqrt(3.)) * (this->up_location[0] - 2*this->up_location[1]);
     double yclus = (1. / sqrt(3.)) * (clusx1[0] - 2*clusu1[0]);
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus);
     matchclus1.push_back(clusu1[1]);  // seting the cluster 3D point z to be of the closest view
-     current_michel->up_clus_y = michely1;
+     this->up_clus_y = michely1;
     }
   }
   else if (VZdist1 < XZdist1 && VZdist1 < UZdist1 && XZdist1 <= UZdist1) { // VX closest
     if (!clusv1.empty() && !clusx1.empty()){
 
-    michely1 = (1. / sqrt(3.)) * (2 * current_michel->up_location[2] - current_michel->up_location[0]);
+    michely1 = (1. / sqrt(3.)) * (2 * this->up_location[2] - this->up_location[0]);
     double yclus = ((1. / sqrt(3.)) * (2 * clusv1[0] - clusx1[0]));
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus);
     matchclus1.push_back(clusv1[1]);  // seting the cluster 3D point z to be of the closest view
-     current_michel->up_clus_y = michely1;
+     this->up_clus_y = michely1;
     }
   }
   else if (VZdist1 < XZdist1 && VZdist1 < UZdist1 && XZdist1 > UZdist1){ // VU closest
     if (!clusu1.empty() && !clusv1.empty()){
 
-    michely1 = (1. / sqrt(3.)) * (current_michel->up_location[2] - current_michel->up_location[1]);
-    michelx1 = current_michel->up_location[1] + current_michel->up_location[2];
+    michely1 = (1. / sqrt(3.)) * (this->up_location[2] - this->up_location[1]);
+    michelx1 = this->up_location[1] + this->up_location[2];
     double xclus = (1. / sqrt(3.)) * (clusv1[0] - clusu1[0]);
     double yclus = clusu1[0] + clusv1[0];
     matchclus1.push_back(xclus);
     matchclus1.push_back(yclus);
     matchclus1.push_back(clusv1[1]);  // seting the cluster 3D point z to be of the closest view
-    current_michel->up_clus_y = michely1;
-    current_michel->up_clus_x = michelx1;
+    this->up_clus_y = michely1;
+    this->up_clus_x = michelx1;
     }
   }
 
-  // get 3D point from the enpoint2 clusters
+  // Calculating 2D distances based on the Closest view positions
   
-
   double XZdist2 = 9999.;
   double UZdist2 = 9999.;
   double VZdist2 = 9999.;
-/*
-  for (unsigned int i = 0; i < endpoint2_clus.size(); i++)
-  {
-    Cluster iclus = endpoint2_clus[i];
-    double energy = iclus.energy;
-    double time = iclus.time;
-    double pos = iclus.pos;
-    double zpos = iclus.zpos;
-    int view = iclus.view;
 
-    if (view == 1)
-    {
-      //XZdist2 = sqrt(pow((pos - michelx2), 2) + pow((zpos - michelz2), 2));
-      clusx2.push_back(pos);
-      clusx2.push_back(zpos);
-    }
-    else if (view == 2)
-    {
-      //UZdist2 = sqrt(pow((pos - michelu2), 2) + pow((zpos - michelz2), 2));
-      clusu2.push_back(pos);
-      clusu2.push_back(zpos);
-    }
-    else if (view == 3)
-    {
-      //VZdist2 = sqrt(pow((pos - michelv2), 2) + pow((zpos - michelz2), 2));
-      clusv2.push_back(pos);
-      clusv2.push_back(zpos);
-    }
-    
-  }
-  
-  */   
   if (!clusx2.empty()){
-      double xdif = abs(current_michel->m_x2 - clusx2[0]);
-      double zdif = abs(current_michel->m_z2 - clusx2[1]);
+      double xdif = abs(this->m_x2 - clusx2[0]);
+      double zdif = abs(this->m_z2 - clusx2[1]);
       XZdist2 = sqrt(xdif*xdif + zdif*zdif);}
   if (!clusu2.empty()){
-      double udif = abs(current_michel->m_u2 - clusu2[0]);
-      double zdif = abs(current_michel->m_z2 - clusu2[1]);
+      double udif = abs(this->m_u2 - clusu2[0]);
+      double zdif = abs(this->m_z2 - clusu2[1]);
       UZdist2 = sqrt(udif*udif + zdif*zdif);}
   if (!clusv2.empty()){
-    double vdif = abs(current_michel->m_v2 - clusv2[0]);
-    double zdif = abs(current_michel->m_z2 - clusv2[1]);
+    double vdif = abs(this->m_v2 - clusv2[0]);
+    double zdif = abs(this->m_z2 - clusv2[1]);
     VZdist2 = sqrt(vdif*vdif + zdif*zdif);}
   
   std::cout << " XZ, UZ, VZ 2: " << XZdist2 << " , " << UZdist2 << " , " << VZdist2 << std::endl;
-  current_michel->down_to_clus_dist2D.push_back(XZdist2);
-  current_michel->down_to_clus_dist2D.push_back(UZdist2);
-  current_michel->down_to_clus_dist2D.push_back(VZdist2);
-  current_michel->down_to_clus_XZ = XZdist2;
-  current_michel->down_to_clus_UZ = UZdist2;
-  current_michel->down_to_clus_VZ = VZdist2;
+  this->down_to_clus_dist2D.push_back(XZdist2);
+  this->down_to_clus_dist2D.push_back(UZdist2);
+  this->down_to_clus_dist2D.push_back(VZdist2);
+  this->down_to_clus_XZ = XZdist2;
+  this->down_to_clus_UZ = UZdist2;
+  this->down_to_clus_VZ = VZdist2;
   //std::cout << "GET 3D Information for Clusters - ENDPOINT2" << std::endl;
-  current_michel->down_clus_y = michely2;
-  current_michel->down_clus_x = michelx2;
-  current_michel->down_clus_z = michelz2;
+  this->down_clus_y = michely2;
+  this->down_clus_x = michelx2;
+  this->down_clus_z = michelz2;
   
   if (XZdist2 < UZdist2 && XZdist2 < VZdist2 && UZdist2 <= VZdist2){
-    //std::cout << "GET 3D Information CASE1" << std::endl;    
+    //std::cout << "XU closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusx2.empty()){
     
-    michely2 = (1. / sqrt(3.)) * (current_michel->down_location[0]- 2*current_michel->down_location[1]);
+    michely2 = (1. / sqrt(3.)) * (this->down_location[0]- 2*this->down_location[1]);
     double yclus = (1. / sqrt(3.)) * (clusx2[0] - 2 * clusu2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
     matchclus2.push_back(clusx2[1]); // seting the cluster 3D point z to be of the closest view
     
-    current_michel->down_clus_y = michely2;
-
+    this->down_clus_y = michely2;
 
     }
   }
   else if (XZdist2 < UZdist2 && XZdist2 < VZdist2 && UZdist2 > VZdist2){
-    //std::cout << "GET 3D Information CASE2" << std::endl;
+    //std::cout << "XV closest to endpoint 2" << std::endl;    
     if (!clusv2.empty() && !clusx2.empty()){
 
-    michely2 = (1. / sqrt(3.)) * (2*current_michel->down_location[2] - current_michel->down_location[0]);
+    michely2 = (1. / sqrt(3.)) * (2*this->down_location[2] - this->down_location[0]);
     double yclus = (1. / sqrt(3.)) * (2 * clusv2[0] - clusx2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
     matchclus2.push_back(clusx2[1]); // seting the cluster 3D point z to be of the closest view
-    current_michel->down_clus_y = michely2;
+    this->down_clus_y = michely2;
 
 
     }
   }
   else if (UZdist2 < XZdist2 && UZdist2 < VZdist2 && VZdist2 <= XZdist2) {
-     //std::cout << "GET 3D Information CASE3" << std::endl;
+    //std::cout << "UV closest to endpoint 2" << std::endl;    
      if (!clusu2.empty() && !clusv2.empty()){
 
-     michely2 = (1. / sqrt(3.)) * (current_michel->down_location[2] - current_michel->down_location[1]);
-     michelx2 = current_michel->down_location[1] + current_michel->down_location[2];
+     michely2 = (1. / sqrt(3.)) * (this->down_location[2] - this->down_location[1]);
+     michelx2 = this->down_location[1] + this->down_location[2];
      double xclus = clusu2[0] + clusv2[0];
      double yclus = (1. / sqrt(3.)) * (clusv2[0] - clusu2[0]);
      matchclus2.push_back(xclus);
      matchclus2.push_back(yclus);
      matchclus2.push_back(clusu2[1]);  // seting the cluster 3D point z to be of the closest view
-     current_michel->down_clus_y = michely2;
-     current_michel->down_clus_y = michelx2;
+     this->down_clus_y = michely2;
+     this->down_clus_y = michelx2;
 
     }
   }
   else if (UZdist2 < XZdist2 && UZdist2 < VZdist2 && VZdist2 > XZdist2) { 
-    //std::cout << "GET 3D Information CASE4" << std::endl;
+    //std::cout << "UX closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusx2.empty()){
-    michely2 = (1. / sqrt(3.)) * (current_michel->down_location[0] - 2*current_michel->up_location[1]);
+    michely2 = (1. / sqrt(3.)) * (this->down_location[0] - 2*this->up_location[1]);
     double yclus =(1. / sqrt(3.)) * (clusx2[0] - 2*clusu2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
     matchclus2.push_back(clusu2[1]);  // seting the cluster 3D point z to be of the closest view
-    current_michel->down_clus_y = michely2;
+    this->down_clus_y = michely2;
     }
   }
   else if (VZdist2 < XZdist2 && VZdist2 < UZdist2 && XZdist2 <= UZdist2) {
-    //std::cout << "GET 3D Information CASE5" << std::endl;
+    //std::cout << "VX closest to endpoint 2" << std::endl;    
     if (!clusv2.empty() && !clusx2.empty()){
-    michely2 = (1. / sqrt(3.)) * (2 * current_michel->down_location[2] - current_michel->down_location[0]);
+    michely2 = (1. / sqrt(3.)) * (2 * this->down_location[2] - this->down_location[0]);
     double yclus = ((1. / sqrt(3.)) * (2 * clusv2[0] - clusx2[0]));
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
     matchclus2.push_back(clusv2[1]);  // seting the cluster 3D point z to be of the closest view
-    current_michel->down_clus_y = michely2;
+    this->down_clus_y = michely2;
     }
   }
   else if (VZdist2 < XZdist2 && VZdist2 < UZdist2 && XZdist2 > UZdist2){
-    //std::cout << "GET 3D Information CASE6" << std::endl;
+    //std::cout << "VU closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusv2.empty()){
-    michely2 = (1. / sqrt(3.)) * (current_michel->down_location[2] - current_michel->down_location[1]);
-    michelx2 = current_michel->down_location[1] + current_michel->down_location[2];
+    michely2 = (1. / sqrt(3.)) * (this->down_location[2] - this->down_location[1]);
+    michelx2 = this->down_location[1] + this->down_location[2];
     double xclus = (1. / sqrt(3.)) * (clusv2[0] - clusu2[0]);
     double yclus = clusu2[0] + clusv2[0];
     matchclus2.push_back(xclus);
     matchclus2.push_back(yclus);
     matchclus2.push_back(clusv2[1]);  // seting the cluster 3D point z to be of the closest view
-    current_michel->down_clus_y = michely2;
-    current_michel->down_clus_x = michelx2;
+    this->down_clus_y = michely2;
+    this->down_clus_x = michelx2;
     }
   }
   
@@ -1114,26 +854,24 @@ if (!clusv1.empty()){
   mclusz2diff = michelz2 - matchclus2[2];
 
   }
+  ///2 types of 3D distance calculations for Cluster matching:
+  //1. Cluster to Vertex
   double dist1 = sqrt(pow(clusx1diff, 2) + pow(clusy1diff, 2) + pow(clusz1diff, 2));
   double dist2 = sqrt(pow(clusx2diff, 2) + pow(clusy2diff, 2) + pow(clusz2diff, 2));
-
+  //2. Cluster to Michel 
   double mdist1 = sqrt(pow(mclusx1diff, 2) + pow(mclusy1diff, 2) + pow(mclusz1diff, 2));
   double mdist2 = sqrt(pow(mclusx2diff, 2) + pow(mclusy2diff, 2) + pow(mclusz2diff, 2));
-
-  current_michel->down_clus_michel_dist3D = mdist2;
-  current_michel->up_clus_michel_dist3D = mdist1;
-  current_michel->up_to_cluster_dist3D = dist1;
-  current_michel->down_to_cluster_dist3D = dist2;
+  //Saving all the distances to the Michel member data
+  this->down_clus_michel_dist3D = mdist2;
+  this->up_clus_michel_dist3D = mdist1;
+  this->up_to_cluster_dist3D = dist1;
+  this->down_to_cluster_dist3D = dist2;
   std::cout << "Printing 3D distances to vertex for cluster matches " << dist1 << " and " << dist2 << std::endl;
   std::cout << "Printing 3D distances to michel for cluster matches " << mdist1 << " and " << mdist2 << std::endl;
- if (dist1 < dist2) current_michel->clus_endpoint = 1;
- else if (dist1 > dist2) current_michel->clus_endpoint = 2;
- 
-
- 
- //if (dist1 < 100. || dist2 < 100.) //std::cout << "Clus Dist 1 " << dist1 << " Clus Dist 2 " << dist2 << endl;
-
-
+  
+ // Marks which endpoint is the closest match for this match type
+ if (dist1 < dist2) this->clus_endpoint = 1;
+ else if (dist1 > dist2) this->clus_endpoint = 2;
 
 }
 
