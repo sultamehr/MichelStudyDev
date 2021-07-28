@@ -19,11 +19,12 @@ class PerMichelVarByGENIELabel: public Study
     using reco_t = std::function<double(const CVUniverse&, const MichelEvent&, const int)>;
     PerMichelVarByGENIELabel(reco_t reco, const std::string& varName, const std::string& varUnits, const int nBins, const double minBin, const double maxBin, std::map<std::string, std::vector<CVUniverse*>>& univs): Study(), fReco(reco), dataHist(new HIST(varName.c_str(), (varName + " [" + varUnits + "]").c_str(), nBins, minBin, maxBin, univs))
     {
-      std::map<int, std::string> GENIELabels = {{1, "QE"},
-                                                {8, "2p2h"},
-                                                {2, "RES"},
-                                                {3, "DIS"}};
-      m_VarToGENIELabel = new util::Categorized<HIST, int>(varName, varName + " [" + varUnits + "]", GENIELabels, nBins, minBin, maxBin, univs);
+     // std::map<int, std::string> GENIELabels = {{1, "QE"},
+                                               // {8, "2p2h"},
+                                               // {2, "RES"},
+                                               // {3, "DIS"}}; //other category is built in for free. 
+      std::map<int, std::string> GENIELabels = {{0, "All?"}}; //other category is built in for free.  
+     m_VarToGENIELabel = new util::Categorized<HIST, int>(varName, varName + " [" + varUnits + "]", GENIELabels, nBins, minBin, maxBin, univs);
    }
     
     

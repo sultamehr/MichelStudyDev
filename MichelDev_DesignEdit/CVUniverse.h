@@ -210,7 +210,7 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
          double pionKE = energy - mass;
          if (pionKE < lowesttpi) lowesttpi = pionKE;
       }
-      std::cout << "lowest energy pi << " << lowesttpi << std::endl;
+  //    std::cout << "lowest energy pi << " << lowesttpi << std::endl;
       return lowesttpi;
   }
   virtual double GetTrueQ2() const {
@@ -277,6 +277,19 @@ class CVUniverse : public PlotUtils::MinervaUniverse {
   virtual void SetTree(PlotUtils::ChainWrapper* treechain){
      m_chw = treechain;
 
+  }
+
+  
+  virtual std::vector<int> GetFSPDGCodes() const {
+     std::vector<int> pdgcodes;
+     int pdgsize = GetInt("mc_nFSPart");
+     for (int i = 0; i< pdgsize; i++)
+      {
+          int pdg = GetVecElem("mc_FSPartPDG", i);
+          pdgcodes.push_back(pdg);
+      }
+
+      return pdgcodes;
   }
 
 

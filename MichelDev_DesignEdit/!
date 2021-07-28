@@ -540,7 +540,7 @@ void Michel::DoesMichelMatchClus(const CVUniverse& univ){
     {
       //Endpoint 1 
 
-      if (i == x1_idx){ // if current index is same as the closest endpoint 1 cluster in X View
+      if (i = x1_idx){ // if current index is same as the closest endpoint 1 cluster in X View
         endpoint1_clus.push_back(current_cluster);
         this->cluster_to_up_match.push_back(current_cluster); //this one is redundant
          std::cout << "Printing details about cluster "<< i << " : "  << energy << " : " << time << " : " << pos << " : " << zpos << " : " << view << " : " << timediff << std::endl;  
@@ -637,7 +637,6 @@ if (!clusv1.empty()){
 //This is the convoluted system that calculates the Endpoint 
   if (XZdist1 < UZdist1 && XZdist1 < VZdist1 && UZdist1 <= VZdist1){ // XU views closest
     if (!clusu1.empty() && !clusx1.empty()){
-    michely1 = (1. / sqrt(3.)) * (this->up_location[0] - 2*this->up_location[1]);
     double yclus = (1. / sqrt(3.)) * (clusx1[0] - 2 * clusu1[0]);
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus); // y point of match 3D point
@@ -649,7 +648,6 @@ if (!clusv1.empty()){
   else if (XZdist1 < UZdist1 && XZdist1 < VZdist1 && UZdist1 > VZdist1){ //XV closest
     if (!clusv1.empty() && !clusx1.empty()){
   
-    michely1 = (1. / sqrt(3.)) * (2*this->up_location[2] - this->up_location[0]);
     double yclus =  (1. / sqrt(3.)) * (2 * clusv1[0] - clusx1[0]);
     matchclus1.push_back(clusx1[0]);
     matchclus1.push_back(yclus);
@@ -740,7 +738,6 @@ if (!clusv1.empty()){
     //std::cout << "XU closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusx2.empty()){
     
-    michely2 = (1. / sqrt(3.)) * (this->down_location[0]- 2*this->down_location[1]);
     double yclus = (1. / sqrt(3.)) * (clusx2[0] - 2 * clusu2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
@@ -754,7 +751,6 @@ if (!clusv1.empty()){
     //std::cout << "XV closest to endpoint 2" << std::endl;    
     if (!clusv2.empty() && !clusx2.empty()){
 
-    michely2 = (1. / sqrt(3.)) * (2*this->down_location[2] - this->down_location[0]);
     double yclus = (1. / sqrt(3.)) * (2 * clusv2[0] - clusx2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
@@ -768,8 +764,6 @@ if (!clusv1.empty()){
     //std::cout << "UV closest to endpoint 2" << std::endl;    
      if (!clusu2.empty() && !clusv2.empty()){
 
-     michely2 = (1. / sqrt(3.)) * (this->down_location[2] - this->down_location[1]);
-     michelx2 = this->down_location[1] + this->down_location[2];
      double xclus = clusu2[0] + clusv2[0];
      double yclus = (1. / sqrt(3.)) * (clusv2[0] - clusu2[0]);
      matchclus2.push_back(xclus);
@@ -783,7 +777,6 @@ if (!clusv1.empty()){
   else if (UZdist2 < XZdist2 && UZdist2 < VZdist2 && VZdist2 > XZdist2) { 
     //std::cout << "UX closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusx2.empty()){
-    michely2 = (1. / sqrt(3.)) * (this->down_location[0] - 2*this->up_location[1]);
     double yclus =(1. / sqrt(3.)) * (clusx2[0] - 2*clusu2[0]);
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
@@ -794,7 +787,6 @@ if (!clusv1.empty()){
   else if (VZdist2 < XZdist2 && VZdist2 < UZdist2 && XZdist2 <= UZdist2) {
     //std::cout << "VX closest to endpoint 2" << std::endl;    
     if (!clusv2.empty() && !clusx2.empty()){
-    michely2 = (1. / sqrt(3.)) * (2 * this->down_location[2] - this->down_location[0]);
     double yclus = ((1. / sqrt(3.)) * (2 * clusv2[0] - clusx2[0]));
     matchclus2.push_back(clusx2[0]);
     matchclus2.push_back(yclus);
@@ -805,8 +797,6 @@ if (!clusv1.empty()){
   else if (VZdist2 < XZdist2 && VZdist2 < UZdist2 && XZdist2 > UZdist2){
     //std::cout << "VU closest to endpoint 2" << std::endl;    
     if (!clusu2.empty() && !clusv2.empty()){
-    michely2 = (1. / sqrt(3.)) * (this->down_location[2] - this->down_location[1]);
-    michelx2 = this->down_location[1] + this->down_location[2];
     double xclus = (1. / sqrt(3.)) * (clusv2[0] - clusu2[0]);
     double yclus = clusu2[0] + clusv2[0];
     matchclus2.push_back(xclus);

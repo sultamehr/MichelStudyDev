@@ -25,6 +25,6 @@ class hasPion: public PlotUtils::SignalConstraint<UNIVERSE>
            nprimpions +=1; 
          }
       }
-    return (nprimpions != 0); 
+    return (nprimpions > 0); 
     }
 };

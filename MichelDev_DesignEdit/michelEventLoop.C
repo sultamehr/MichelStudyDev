@@ -45,12 +45,13 @@
 #include "studies/Study.h"
 #include "studies/PerMichelVarByGENIELabel.h"
 #include "studies/PerMichelEventVarByGENIELabel.h" 
-#include "studies/CreateDataHistPerMichelEvent.h"
-#include "studies/CreateDataHistPerMichel.h"
+
 #endif //CINT
 #include "Michel.h"
 #include "Cluster.h"
 #include "MichelEvent.h"
+
+//The following are in development and might not be needed
 #include "MatchedMichel.h"
 #include "Pion.h"
 #include "PionEvent.h"
@@ -62,9 +63,15 @@
 
 class Variable;
 
+// Histogram binning constants
+ const int nbins = 30;
+ const double xmin = 0.;
+ const double xmax = 20.e3;
+
 //==============================================================================
 // Plot
 //==============================================================================
+
 void PlotErrorSummary(PlotUtils::MnvH1D* h, std::string label) {
   PlotUtils::MnvH1D* hist = (PlotUtils::MnvH1D*)h->Clone("hist");
   PlotUtils::MnvPlotter mnv_plotter( kCompactStyle);
@@ -208,15 +215,14 @@ void LoopAndFillEventSelection(
         
           for(auto& var: vars)
           {
-            for(auto& study: studies) study->SelectedSignal(*universe, myevent, 1); //TODO: Last argument is weight
             //TODO: #include "study.h"
 
             //#include "MichelEventStudy.h"	
             (*var->m_bestPionByGENIELabel)[universe->GetInteractionType()].FillUniverse(universe, var->GetRecoValue(*universe, myevent.m_idx), universe->GetWeight());
 
             //Fill other per-Variable histograms here
-            
           }
+          for(auto& study: studies) study->SelectedSignal(*universe, myevent, 1); //TODO: Last argument is weight
           
       } // End band's universe loop
     } // End Band loop
@@ -289,7 +295,8 @@ void LoopAndFillEffDenom( PlotUtils::ChainWrapper* truth,
 //==============================================================================
 // Main
 //==============================================================================
-void testEventLoop() {
+void michelEventLoop() {
+
   TH1::AddDirectory(false);
   // Make a chain of events
   //PlotUtils::ChainWrapper* chain = makeChainWrapperPtr("CCQENu_minervame1A_MC_Inextinguishable_merged.txt", 
@@ -354,64 +361,64 @@ void testEventLoop() {
   #ifndef __CINT__
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> oneVar = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                  {
-                                   return evt.m_nmichels[whichMichel]->Best3Ddist;
+                                   return evt.m_nmichels[whichMichel].Best3Ddist;
                                  };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> michelE = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                  {
-                                   return evt.m_nmichels[whichMichel]->energy;
+                                   return evt.m_nmichels[whichMichel].energy;
                                  };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> delta_t = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
 				 {
-                                   double micheltime = evt.m_nmichels[whichMichel]->time;
+                                   double micheltime = evt.m_nmichels[whichMichel].time;
                                    double vtxtime = univ.GetVertex().t();
                                    double deltat = (micheltime - vtxtime/1000.); //hopefully this is in microseconds (mus)
-				   return deltat;
+                                   return deltat;
 				 };
 
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_vtx_dist = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
 				{
-				  double micheldist = evt.m_nmichels[whichMichel]->up_to_vertex_dist3D;
+				  double micheldist = evt.m_nmichels[whichMichel].up_to_vertex_dist3D;
  				  return micheldist;
 				};
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_vtx_dist = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_vertex_dist3D;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_vertex_dist3D;
                                   return micheldist;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_clus_range = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_cluster_dist3D;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_cluster_dist3D;
                                   return micheldist;
                                 };
 std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clus_range = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_cluster_dist3D;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_cluster_dist3D;
                                   return micheldist;
                                 };
 
 std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_clus_mich = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_clus_michel_dist3D;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_clus_michel_dist3D;
                                   return micheldist;
                                 };
 
 std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clus_mich = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_clus_michel_dist3D;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_clus_michel_dist3D;
                                   return micheldist;
                                 };
 
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_dist = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
 				{
-				  double micheldist = evt.m_nmichels[whichMichel]->Best3Ddist;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+				  double micheldist = evt.m_nmichels[whichMichel].Best3Ddist;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 3 || match == 4) return micheldist;
 				  else return 9999.;
 				};
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_dist = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->Best3Ddist;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].Best3Ddist;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 1 || match == 2) return micheldist;
                                   else return 9999.;
                                 };
@@ -420,53 +427,53 @@ std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clu
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_mich_dist = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
                                   double micheldist;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 3 || match == 4){
-				    micheldist = evt.m_nmichels[whichMichel]->up_clus_michel_dist3D;
+				    micheldist = evt.m_nmichels[whichMichel].up_clus_michel_dist3D;
 				    return micheldist;
 				  }
                                   else return 9999.;
                                 };
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_XZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_XZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 1 || match == 2) return micheldist;
 				  else return 9999.;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_XZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_XZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 3 || match == 4) return micheldist;
 				  else return 9999.;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_UZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_UZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 1 || match == 2) return micheldist;
 				  else return 9999.;
                                 };
 
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_UZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_UZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 3 || match == 4) return micheldist;
 				  else return 9999.;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_VZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_VZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 1 || match == 2) return micheldist;
 				  else return 9999.;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->best_VZ;
-                                  int match = (evt.m_nmichels[whichMichel]->BestMatch);
+                                  double micheldist = evt.m_nmichels[whichMichel].best_VZ;
+                                  int match = (evt.m_nmichels[whichMichel].BestMatch);
                                   if (match == 3 || match == 4) return micheldist;
 				  else return 9999.;
                                 };
@@ -508,74 +515,74 @@ std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clu
 
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_up_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_vertex_XZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_vertex_XZ;
                                   return micheldist;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_down_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_vertex_XZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_vertex_XZ;
 			          return micheldist;
 				};
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_up_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_vertex_UZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_vertex_UZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_down_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_vertex_UZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_vertex_UZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_up_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_vertex_VZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_vertex_VZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> vtx_down_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_vertex_VZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_vertex_VZ;
                                   return micheldist;
                                 };
   
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_up_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_clus_XZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_clus_XZ;
                                   return micheldist;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_down_XZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_clus_XZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_clus_XZ;
                                   return micheldist;
                                 };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_up_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_clus_UZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_clus_UZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_down_UZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_clus_UZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_clus_UZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_up_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->up_to_clus_VZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].up_to_clus_VZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> clus_down_VZ = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double micheldist = evt.m_nmichels[whichMichel]->down_to_clus_VZ;
+                                  double micheldist = evt.m_nmichels[whichMichel].down_to_clus_VZ;
                                   return micheldist;
                                 };
  std::function<double(const CVUniverse&, const MichelEvent&, const int)> overlay_frac = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  double frac = evt.m_nmichels[whichMichel]->overlay_fraction;
+                                  double frac = evt.m_nmichels[whichMichel].overlay_fraction;
                                   std::cout << "Printing overlay fraction : " << frac << std::endl;
  				  return frac;
                                 };
 std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
                                 {
-                                  int isoverlay = evt.m_nmichels[whichMichel]->is_overlay;
+                                  int isoverlay = evt.m_nmichels[whichMichel].is_overlay;
                                   std::cout << "Printing overlay boolean " << isoverlay << std::endl;
                                   return isoverlay;
                                 };
@@ -588,121 +595,121 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
    
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_vtx_x = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->up_vtx_x;
+    double x = evt.m_nmichels[whichMichel].up_vtx_x;
     return x; 
   };
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_vtx_y = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->up_vtx_y;
+    double y = evt.m_nmichels[whichMichel].up_vtx_y;
     return y;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_vtx_z = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->up_vtx_z;
+    double z = evt.m_nmichels[whichMichel].up_vtx_z;
     return z;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_vtx_x = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->down_vtx_x;
+    double x = evt.m_nmichels[whichMichel].down_vtx_x;
     return x;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_vtx_y = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->down_vtx_y;
+    double y = evt.m_nmichels[whichMichel].down_vtx_y;
     return y;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_vtx_z = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->down_vtx_z;
+    double z = evt.m_nmichels[whichMichel].down_vtx_z;
     return z;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_clus_x = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->up_clus_x;
+    double x = evt.m_nmichels[whichMichel].up_clus_x;
     return x;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_clus_y = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->up_clus_y;
+    double y = evt.m_nmichels[whichMichel].up_clus_y;
     return y;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> up_clus_z = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->up_clus_z;
+    double z = evt.m_nmichels[whichMichel].up_clus_z;
     return z;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clus_x = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->down_clus_x;
+    double x = evt.m_nmichels[whichMichel].down_clus_x;
     return x;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clus_y = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->down_clus_y;
+    double y = evt.m_nmichels[whichMichel].down_clus_y;
     return y;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> down_clus_z = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->down_clus_z;
+    double z = evt.m_nmichels[whichMichel].down_clus_z;
     return z;
   };
 
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> true_x = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->true_initialx;
+    double x = evt.m_nmichels[whichMichel].true_initialx;
     return x;
   };
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> true_y = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->true_initialy;
+    double y = evt.m_nmichels[whichMichel].true_initialy;
     return y;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> true_z = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->true_initialz;
+    double z = evt.m_nmichels[whichMichel].true_initialz;
     return z;
   };
 
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_x1 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->true_initialx;
-    double recx = evt.m_nmichels[whichMichel]->m_x1;
+    double x = evt.m_nmichels[whichMichel].true_initialx;
+    double recx = evt.m_nmichels[whichMichel].m_x1;
     double diff = x - recx;
     return diff;
   };
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_y1 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double y = evt.m_nmichels[whichMichel]->true_initialy;
-    double recy = evt.m_nmichels[whichMichel]->m_y1;
+    double y = evt.m_nmichels[whichMichel].true_initialy;
+    double recy = evt.m_nmichels[whichMichel].m_y1;
     double diff = y - recy;
     return diff;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_z1 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double z = evt.m_nmichels[whichMichel]->true_initialz;
-    double recz = evt.m_nmichels[whichMichel]->m_z1;
+    double z = evt.m_nmichels[whichMichel].true_initialz;
+    double recz = evt.m_nmichels[whichMichel].m_z1;
     double diff = z - recz;
     return diff;
   };
 
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_x2 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   {
-    double x = evt.m_nmichels[whichMichel]->true_initialx;
-    double recx = evt.m_nmichels[whichMichel]->m_x2;
+    double x = evt.m_nmichels[whichMichel].true_initialx;
+    double recx = evt.m_nmichels[whichMichel].m_x2;
     double diff = x - recx;
     return diff;
   };
    std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_y2 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   { 
-    double y = evt.m_nmichels[whichMichel]->true_initialy;
-    double recy = evt.m_nmichels[whichMichel]->m_y2;
+    double y = evt.m_nmichels[whichMichel].true_initialy;
+    double recy = evt.m_nmichels[whichMichel].m_y2;
     double diff = y - recy;
     return diff;
   };
   std::function<double(const CVUniverse&, const MichelEvent&, const int)> truerecodiff_z2 = [](const CVUniverse& univ, const MichelEvent& evt, const int whichMichel)
   { 
-    double z = evt.m_nmichels[whichMichel]->true_initialz;
-    double recz = evt.m_nmichels[whichMichel]->m_z2;
+    double z = evt.m_nmichels[whichMichel].true_initialz;
+    double recz = evt.m_nmichels[whichMichel].m_z2;
     double diff = z - recz;
     return diff;
   };
@@ -712,8 +719,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
 			   	   int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 				   else{
-                                   double x = evt.m_nmichels[bestidx]->m_x1;
-                                   double tx = evt.m_nmichels[bestidx]->true_initialx;
+                                   double x = evt.m_nmichels[bestidx].m_x1;
+                                   double tx = evt.m_nmichels[bestidx].true_initialx;
                                    return tx-x;
 				   }
                                  };
@@ -723,8 +730,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
 				   int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 		    		   else{
-				   double y = evt.m_nmichels[bestidx]->m_y1;
-                                   double ty = evt.m_nmichels[bestidx]->true_initialy;
+				   double y = evt.m_nmichels[bestidx].m_y1;
+                                   double ty = evt.m_nmichels[bestidx].true_initialy;
                                    return ty-y;
 				   }
                                  };
@@ -733,8 +740,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
 				   int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 				   else {
-				   double z = evt.m_nmichels[bestidx]->m_z1;
-                                   double tz = evt.m_nmichels[bestidx]->true_initialz;
+				   double z = evt.m_nmichels[bestidx].m_z1;
+                                   double tz = evt.m_nmichels[bestidx].true_initialz;
                                    return tz-z;
 				   }
                                  };
@@ -745,8 +752,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
                                    int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 			           else{
-				   double x = evt.m_nmichels[bestidx]->m_x2;
-                                   double tx = evt.m_nmichels[bestidx]->true_initialx;
+				   double x = evt.m_nmichels[bestidx].m_x2;
+                                   double tx = evt.m_nmichels[bestidx].true_initialx;
                                    return tx-x;
 				   }
                                  };
@@ -756,8 +763,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
                                    int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 				   else{
-				   double y = evt.m_nmichels[bestidx]->m_y2;
-                                   double ty = evt.m_nmichels[bestidx]->true_initialy;
+				   double y = evt.m_nmichels[bestidx].m_y2;
+                                   double ty = evt.m_nmichels[bestidx].true_initialy;
                                    return ty-y;
 				   }
                                  };
@@ -766,8 +773,8 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
                                    int bestidx = evt.m_idx;
                                    if (bestidx < 0) return -9999.;
 				   else {
-				   double z = evt.m_nmichels[bestidx]->m_z2;
-                                   double tz = evt.m_nmichels[bestidx]->true_initialz;
+				   double z = evt.m_nmichels[bestidx].m_z2;
+                                   double tz = evt.m_nmichels[bestidx].true_initialz;
                                    return tz-z;
 				   }
                                  };
@@ -864,12 +871,12 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
   // data_studies.push_back(new CreateDataHistPerMichel(delta_t, "Michel Time Diff", "#mus", 30, 0.0, 9.0, data_band));
   // data_studies.push_back(new CreateDataHistPerMichelEvent(bestdistvar, "Best Distance", "mm", 100, 0, 1000., data_band));
    
-  data_studies.push_back(new PerMichelVarByGENIELabel(oneVar, "Best Distance DATA", "mm", 100, 0., 1000., data_error_bands));
-  data_studies.push_back(new PerMichelVarByGENIELabel(michelE, "Michel energy DATA", "MeV", 20, 0., 100., data_error_bands));
-  data_studies.push_back(new PerMichelVarByGENIELabel(delta_t, "Michel Time Diff DATA", "#mus", 30, 0.0, 9.0, data_error_bands));
-  data_studies.push_back(new PerMichelEventVarByGENIELabel(bestdistvar, "Best Distance DATA", "mm", 100, 0., 1000., data_error_bands));
-  data_studies.push_back(new PerMichelEventVarByGENIELabel(vtxdist, "Vertex - Michel Distance", "mm", 100, 0., 1000., data_error_bands));
-  data_studies.push_back(new PerMichelEventVarByGENIELabel(clusdist, "Vertex - Cluster Distance", "mm", 100, 0., 1000., data_error_bands)); 
+  //data_studies.push_back(new PerMichelVarByGENIELabel(oneVar, "Best Distance DATA", "mm", 100, 0., 1000., data_error_bands));
+  //data_studies.push_back(new PerMichelVarByGENIELabel(michelE, "Michel energy DATA", "MeV", 20, 0., 100., data_error_bands));
+  //data_studies.push_back(new PerMichelVarByGENIELabel(delta_t, "Michel Time Diff DATA", "#mus", 30, 0.0, 9.0, data_error_bands));
+  //data_studies.push_back(new PerMichelEventVarByGENIELabel(bestdistvar, "Best Distance DATA", "mm", 100, 0., 1000., data_error_bands));
+  //data_studies.push_back(new PerMichelEventVarByGENIELabel(vtxdist, "Vertex - Michel Distance", "mm", 100, 0., 1000., data_error_bands));
+  //data_studies.push_back(new PerMichelEventVarByGENIELabel(clusdist, "Vertex - Cluster Distance", "mm", 100, 0., 1000., data_error_bands)); 
    #endif //__CINT__
 
 
@@ -879,7 +886,7 @@ std::function<int(const CVUniverse&, const MichelEvent&, const int)> is_overlay 
   auto precuts = reco::GetCCInclusive2DCuts<CVUniverse, MichelEvent>();
   precuts.emplace_back(new Q3RangeReco<CVUniverse, MichelEvent>(0.0, 1.20));
   precuts.emplace_back(new hasMichel<CVUniverse, MichelEvent>());
-//  precuts.emplace_back(new BestMichelDistance2D<CVUniverse, MichelEvent>(102.));
+  precuts.emplace_back(new BestMichelDistance2D<CVUniverse, MichelEvent>(102.));
   auto signalDefinition = truth::GetCCInclusive2DSignal<CVUniverse>();
   signalDefinition.emplace_back(new Q3Limit<CVUniverse>(1.2));
 //  signalDefinition.emplace_back(new hasPion<CVUniverse>);
